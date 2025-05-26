@@ -1,0 +1,5 @@
+# plugins.txt
+git
+workflow-aggregator
+docker-plugin
+blueocean
