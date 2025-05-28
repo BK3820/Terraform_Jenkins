@@ -11,7 +11,10 @@ packer {
 
 source "azure-arm" "sig_image" {
 
-
+  client_id = 
+  client_secret = 
+  tenant_id = 
+  subscription_id = 
 
 
   location                          = "canadacentral"
@@ -37,6 +40,11 @@ build {
   provisioner "file" {
   source      = "plugin.txt"
   destination = "/tmp/plugins.txt"
+}
+
+  provisioner "file" {
+  source      = "jenkins.yaml"
+  destination = "/tmp/jenkins.yaml"
 }
 
   provisioner "shell" {

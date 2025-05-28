@@ -10,7 +10,7 @@ df -h
 
 sudo useradd -m -s /bin/bash jenkins
 
-sudo mkdir -p /var/lib/jenkins /usr/share/jenkins/ref
+sudo mkdir -p /var/lib/jenkins /usr/share/jenkins/ref /var/lib/jenkins/plugins
 
 sudo mv /tmp/plugins.txt /usr/share/jenkins/ref/plugins.txt
 
@@ -44,6 +44,8 @@ sudo wget https://github.com/jenkinsci/plugin-installation-manager-tool/releases
 sudo wget -O /usr/share/jenkins/jenkins.war https://get.jenkins.io/war-stable/latest/jenkins.war
 
 
+
+
 sudo java -jar jenkins-plugin-manager-*.jar \
   --war /usr/share/jenkins/jenkins.war \
   --plugin-download-directory /var/lib/jenkins/plugins/ \
@@ -51,9 +53,28 @@ sudo java -jar jenkins-plugin-manager-*.jar \
   --plugins delivery-pipeline-plugin:1.3.2 deployit-plugin
 
 
+
+
+sudo mkdir -p /etc/jenkins/casc
+sudo cp /tmp/jenkins.yaml /etc/jenkins/casc/jenkins.yaml
+sudo chown -R jenkins:jenkins /etc/jenkins
+
+sudo mkdir -p /etc/systemd/system/jenkins.service.d
+
+echo "[Service]
+Environment=\"JAVA_OPTS=-Djava.awt.headless=true -Djenkins.install.runSetupWizard=false\"
+Environment=\"CASC_JENKINS_CONFIG=/etc/jenkins/casc/jenkins.yaml\"
+" | sudo tee /etc/systemd/system/jenkins.service.d/override.conf
+
+
+
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+
+
+
 sudo systemctl enable jenkins 
-
 sudo systemctl start jenkins
-
-
 sudo ufw allow 8080
+sudo rm -f /var/lib/jenkins/secrets/initialAdminPassword
+sudo sleep 10

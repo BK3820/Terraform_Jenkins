@@ -1,0 +1,36 @@
+jenkins:
+  systemMessage: "Jenkins configured automatically by Jenkins Configuration as Code plugin\n\n"
+  numExecutors: 1
+
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: admin
+          name: AdminUser
+          password: admin123
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+      
+unclassified:
+  mailer:
+    smtpHost: "smtp.gmail.com"
+    smtpPort: "587"
+    useSsl: false
+    authentication:
+      username: "xyz@gmail.com"
+      password: ""
+    charset: "UTF-8"
+
+jobs:
+  - script: >
+      job('Email_Notification_Job') {
+        description('Job that sends email on success/failure')
+        steps {
+          shell('echo Hello from Jenkins!')
+        }
+        publishers {
+          mailer('target@gmail.com', true, true)
+        }
+      }

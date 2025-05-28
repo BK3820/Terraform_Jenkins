@@ -1,5 +1,8 @@
-# plugins.txt
+configuration-as-code:latest
 git
 workflow-aggregator
 docker-plugin
 blueocean
+mailer
+job-dsl
+
