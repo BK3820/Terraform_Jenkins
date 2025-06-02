@@ -21,6 +21,7 @@ env:
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
   TF_VAR_admin_username: "azureuser"
   TF_VAR_admin_public_key_path: "id_rsa.pub"
+  PACKER_LOG: "1"
 
 jobs:
   detect-packer-change:
