@@ -7,14 +7,18 @@ packer {
   }
 }
 
+variable "client_id" {}
+variable "client_secret" {}
+variable "tenant_id" {}
+variable "subscription_id" {}
 
 
 source "azure-arm" "sig_image" {
 
-  client_id = env("ARM_CLIENT_ID")
-  client_secret = env("ARM_CLIENT_SECRET")
-  tenant_id = env("ARM_TENANT_ID")
-  subscription_id = env("ARM_SUBSCRIPTION_ID")
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
+  subscription_id = var.subscription_id
 
 
   location                          = "canadacentral"

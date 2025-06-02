@@ -70,9 +70,14 @@ jobs:
 
       - name: Init, validate, build packer image
         run: |
-          packer init .
-          packer validate .
-          packer build .
+          packer init azjenkins.pkr.hcl
+          packer validate azjenkins.pkr.hcl
+          packer build \
+            -var "client_id=${ARM_CLIENT_ID}" \
+            -var "client_secret=${ARM_CLIENT_SECRET}" \
+            -var "tenant_id=${ARM_TENANT_ID}" \
+            -var "subscription_id=${ARM_SUBSCRIPTION_ID}" \
+            azjenkins.pkr.hcl
 
   detect-terraform-change:
     runs-on: ubuntu-latest
