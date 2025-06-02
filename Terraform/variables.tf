@@ -7,7 +7,7 @@ variable "resource_group_name" {
 
 variable "resource_group_location" {
   type        = string
-  description = "location of resoruce group"
+  description = "location of Resoruce group"
 }
 
 variable "virtual_network_name" {
