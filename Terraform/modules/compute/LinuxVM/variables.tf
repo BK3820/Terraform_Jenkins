@@ -64,3 +64,15 @@ variable "network_interface_id" {
   description = "ID of the network interface"
   type        = string
 }
+
+variable "use_custom_image" {
+  type        = bool
+  description = "Use custom image ID instead of marketplace image"
+}
+
+variable "custom_image_id" {
+  type        = string
+  default     = ""
+  description = "Custom image ID (if use_custom_image is true)"
+}
+

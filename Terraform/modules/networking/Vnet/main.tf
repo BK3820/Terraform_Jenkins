@@ -1,6 +1,6 @@
 
 
-resource "azurerm_virtual_network" "Vnet" {
+resource "azurerm_virtual_network" "moduleVnet" {
   name                = var.azurerm_virtual_network_name
   resource_group_name = var.azurerm_virtual_network_RG
   location            = var.azurerm_virtual_network_location

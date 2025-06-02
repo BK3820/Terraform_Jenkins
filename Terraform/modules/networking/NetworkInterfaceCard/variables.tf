@@ -18,3 +18,7 @@ variable "subnetiId" {
   description = "ID of the subnet for NIC integration"
 }
 
+variable "publicip_id"{
+  description = "ip id"
+}
+

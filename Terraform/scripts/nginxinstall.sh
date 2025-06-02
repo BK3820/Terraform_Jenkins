@@ -1,6 +1,3 @@
-################################################################
-
-
 #!/bin/bash
 
 JENKINS_PRIVATE_IP="$1"
@@ -30,6 +27,10 @@ sudo cat /etc/nginx/conf.d/jenkins.conf
 # Install SELinux utils (optional, as SELinux is disabled)
 sudo apt install selinux-utils -y
 sudo setenforce permissive || echo "SELinux is disabled or not installed"
+
+sudo rm /etc/nginx/sites-enabled/default
+sudo rm /etc/nginx/conf.d/default.conf 2>/dev/null
+
 
 # Test and reload Nginx
 sudo nginx -t
