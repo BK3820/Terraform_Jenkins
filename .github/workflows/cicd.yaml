@@ -77,6 +77,13 @@ jobs:
           echo "ARM_SUBSCRIPTION_ID is set: ${ARM_SUBSCRIPTION_ID+x}"
 
       - name: Init, validate, build packer image
+        env:
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          PACKER_LOG: "1"
+          
         run: |
           packer init azjenkins.pkr.hcl
           packer validate azjenkins.pkr.hcl
