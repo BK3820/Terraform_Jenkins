@@ -67,17 +67,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-packer@v2
-      
-      - name: Run Packer
-        env:
-          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-          IMAGE_NAME: jenkins-image
-          IMAGE_RESOURCE_GROUP: vmImage
-          TF_VAR_admin_username: azureuser
-          TF_VAR_admin_public_key_path: id_rsa.pub
           
       - name: Debug environment variables
         run: |
