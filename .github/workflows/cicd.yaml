@@ -3,8 +3,8 @@ name: Packer and Terraform CI/CD
 on:
   push:
     paths:
-      - 'packer/**'
-      - 'terraform/**'
+      - 'Packer/**'
+      - 'Terraform/**'
   pull_request:
   workflow_dispatch:
 
@@ -33,7 +33,7 @@ jobs:
       - name: Detect packer file changes
         id: check
         run: |
-          if git diff --quiet HEAD^ HEAD -- packer; then
+          if git diff --quiet HEAD^ HEAD -- Packer; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
@@ -90,7 +90,7 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           elif ! git rev-parse HEAD^ >/dev/null 2>&1; then
             echo "changed=false" >> $GITHUB_OUTPUT
-          elif git diff --quiet HEAD^ HEAD -- terraform; then
+          elif git diff --quiet HEAD^ HEAD -- Terraform; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
