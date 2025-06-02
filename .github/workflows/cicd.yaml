@@ -6,6 +6,7 @@ on:
       - 'packer/**'
       - 'terraform/**'
   pull_request:
+  workflow_dispatch:
 
 env:
   IMAGE_NAME: "jenkins-image"
