@@ -8,6 +8,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   IMAGE_NAME: "jenkins-image"
   IMAGE_RESOURCE_GROUP: "vmImage"
