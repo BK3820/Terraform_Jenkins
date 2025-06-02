@@ -1,0 +1,111 @@
+name: Packer and Terraform CI/CD
+
+on:
+  push:
+    paths:
+      - 'packer/**'
+      - 'terraform/**'
+  pull_request:
+
+env:
+  IMAGE_NAME: "jenkins-image"
+  IMAGE_RESOURCE_GROUP: "vmImage"
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  TF_VAR_admin_username: "azureuser"
+  TF_VAR_admin_public_key_path: "id_rsa.pub"
+
+jobs:
+  detect-packer-change:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.check.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Detect packer file changes
+        id: check
+        run: |
+          if git diff --quiet HEAD^ HEAD -- packer; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+  check-image-exists:
+    runs-on: ubuntu-latest
+    outputs:
+      exists: ${{ steps.check.outputs.exists }}
+    steps:
+      - name: Login to Azure CLI
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: Check if Azure image exists
+        id: check
+        run: |
+          if az image show --resource-group $IMAGE_RESOURCE_GROUP --name $IMAGE_NAME &>/dev/null; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+  packer-build:
+    runs-on: ubuntu-latest
+    needs: [detect-packer-change, check-image-exists]
+    if: needs.detect-packer-change.outputs.changed == 'true' || needs.check-image-exists.outputs.exists == 'false'
+    defaults:
+      run:
+        working-directory: packer
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-packer@v2
+
+      - name: Init, validate, build packer image
+        run: |
+          packer init .
+          packer validate .
+          packer build .
+
+  detect-terraform-change:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.check.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Detect terraform file changes
+        id: check
+        run: |
+          if git diff --quiet HEAD^ HEAD -- terraform; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+  terraform-apply:
+    runs-on: ubuntu-latest
+    needs: [packer-build, detect-packer-change, detect-terraform-change]
+    if: needs.packer-build.result == 'success' || needs.detect-terraform-change.outputs.changed == 'true'
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Save SSH public key to file
+        run: |
+          echo "${{ secrets.VM_SSH_PUBLIC_KEY }}" > id_rsa.pub
+          chmod 600 id_rsa.pub
+
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init, Plan, Apply
+        run: |
+          terraform init
+          terraform validate
+          terraform plan -out=tfplan
+          terraform apply -auto-approve tfplan
