@@ -1,4 +1,4 @@
-resource_group_name     = "rg-dev"
+resource_group_name     = "RG-dev"
 resource_group_location = "Canada Central"
 
 virtual_network_name = "vnet-dev"
