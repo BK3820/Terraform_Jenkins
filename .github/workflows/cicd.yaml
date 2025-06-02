@@ -63,7 +63,7 @@ jobs:
     if: needs.detect-packer-change.outputs.changed == 'true' || needs.check-image-exists.outputs.exists == 'false'
     defaults:
       run:
-        working-directory: packer
+        working-directory: Packer
     steps:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-packer@v2
@@ -95,7 +95,7 @@ jobs:
     if: needs.packer-build.result == 'success' || needs.detect-terraform-change.outputs.changed == 'true'
     defaults:
       run:
-        working-directory: terraform
+        working-directory: Terraform
     steps:
       - uses: actions/checkout@v3
 
@@ -108,7 +108,7 @@ jobs:
 
       - name: Terraform Init, Plan, Apply
         run: |
-          terraform init
-          terraform validate
-          terraform plan -out=tfplan
-          terraform apply -auto-approve tfplan
+          terraform init Terraform/
+          terraform validate Terraform/
+          terraform plan -out=tfplan Terraform/
+          terraform apply -auto-approve tfplan Terraform/
