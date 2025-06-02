@@ -86,7 +86,11 @@ jobs:
       - name: Detect terraform file changes
         id: check
         run: |
-          if git diff --quiet HEAD^ HEAD -- terraform; then
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          elif ! git rev-parse HEAD^ >/dev/null 2>&1; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          elif git diff --quiet HEAD^ HEAD -- terraform; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
             echo "changed=true" >> $GITHUB_OUTPUT
