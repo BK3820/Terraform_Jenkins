@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: AZURE_SP
     needs: [detect-packer-change, check-image-exists]
-    if: needs.detect-packer-change.outputs.changed == 'true' || needs.check-image-exists.outputs.exists == 'false'
+    if: (needs.detect-packer-change.outputs.changed == 'true' && github.event_name != 'workflow_dispatch') || needs.check-image-exists.outputs.exists == 'false'
     defaults:
       run:
         working-directory: Packer
@@ -94,6 +94,7 @@ jobs:
 
   terraform-apply:
     runs-on: ubuntu-latest
+    environment: AZURE_SP
     needs: [packer-build, detect-packer-change, detect-terraform-change]
     if: needs.packer-build.result == 'success' || needs.detect-terraform-change.outputs.changed == 'true'
     defaults:
@@ -111,10 +112,10 @@ jobs:
 
       - name: Terraform Init, Plan, Apply
         run: |
-          terraform init Terraform/
-          terraform validate Terraform/
-          terraform plan -out=tfplan Terraform/
-          terraform apply -auto-approve tfplan Terraform/
+          terraform init 
+          terraform validate 
+          terraform plan -out=tfplan 
+          terraform apply -auto-approve tfplan 
 
 
 
