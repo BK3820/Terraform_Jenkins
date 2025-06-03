@@ -28,6 +28,7 @@ env:
   ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
   TF_VAR_admin_username: "azureuser"
   TF_VAR_admin_public_key_path: "id_rsa.pub"
 
