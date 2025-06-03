@@ -35,7 +35,7 @@ env:
 
 jobs:
   Terrafrom-scan-Checkov:
-    if: github.event.inputs.action == 'apply'
+    if: github.event.inputs.action == 'destroy'
     runs-on: ubuntu-latest
 
     steps:
@@ -69,7 +69,7 @@ jobs:
       - name: setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          cli_config_credential_token: ${{secrets.TF_API_TOKEN}}
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - name: Save SSH public key to file
         run: |
           echo "${{ secrets.VM_SSH_PUBLIC_KEY }}" > id_rsa.pub
