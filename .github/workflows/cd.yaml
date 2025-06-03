@@ -21,21 +21,10 @@ permissions:
   security-events: write
 
 
-env:
-  IMAGE_NAME: "jenkins-image"
-  IMAGE_RESOURCE_GROUP: "vmImage"
-  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
-  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
-  TF_VAR_admin_username: "azureuser"
-  TF_VAR_admin_public_key_path: "id_rsa.pub"
-
 
 jobs:
-  Terrafrom-scan-Checkov:
-    if: github.event.inputs.action == 'destroy'
+  Terraform-scan-Checkov:
+    if: github.event.inputs.action == 'apply'
     runs-on: ubuntu-latest
 
     steps:
@@ -58,9 +47,11 @@ jobs:
 
   Terraform-apply:
     if: github.event.inputs.action == 'apply'
-    
+    needs: Terraform-scan-Checkov
     runs-on: ubuntu-latest
-    environment: AZURE_SP
+    env:
+      TF_VAR_admin_username: "azureuser"
+      TF_VAR_admin_public_key_path: "id_rsa.pub"
     defaults:
       run:
         working-directory: Terraform
@@ -75,12 +66,8 @@ jobs:
           echo "${{ secrets.VM_SSH_PUBLIC_KEY }}" > id_rsa.pub
           chmod 600 id_rsa.pub
 
-
       - name: Terraform Init
         run: terraform init
-      
-      - name: Terraform Refresh
-        run: terraform refresh
 
       - name: Terraform Plan
         run: terraform plan
@@ -92,19 +79,18 @@ jobs:
   Terraform-Destroy:
     if: github.event.inputs.action == 'destroy'
     runs-on: ubuntu-latest
-    environment: AZURE_SP
     defaults:
       run:
         working-directory: Terraform
     steps:
       - uses: actions/checkout@v3
-      
+      - name: setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - uses: hashicorp/setup-terraform@v3
       - name: Terraform Init
         run: terraform init
-      
-      - name: Terraform Refresh
-        run: terraform refresh
 
       - name: Terraform Plan
         run: terraform plan
