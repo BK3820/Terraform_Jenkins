@@ -1,0 +1,46 @@
+name: CD Pipeline
+
+on:
+  push:
+    paths:
+      - 'terraform/**'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  IMAGE_NAME: "jenkins-image"
+  IMAGE_RESOURCE_GROUP: "vmImage"
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  TF_VAR_admin_username: "azureuser"
+  TF_VAR_admin_public_key_path: "id_rsa.pub"
+
+
+jobs:
+  Terrafrom-scan-Checkov:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Checkov GitHub Action
+        uses: bridgecrewio/checkov-action@v12.1347.0
+        with:
+          directory: Terraform
+          soft_fail: true
+          framework: terraform
+          output_format: sarif
+
+
+
+
+
+    
+        
+                
+          
