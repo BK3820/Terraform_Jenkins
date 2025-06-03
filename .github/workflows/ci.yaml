@@ -3,9 +3,20 @@ name: Continous Integration - Packer build
 on:
   push:
     paths:
-      - 'packer/**'
+      - 'Packer/**'
 
 
 jobs:
   Packer-Scan:
-    runs-on:  
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkov GitHub Action
+        uses: bridgecrewio/checkov-action@v12.1347.0
+        with:
+          # directory with infrastructure code to scan
+          directory: ./Packer
+          soft_fail: true
+          framework: packer
+          check: CKV_PCKR_1,CKV_PCKR_2,CKV_PCKR_3,CKV_PCKR_4,CKV_PCKR_5,CKV_PCKR_6
+          output_format: json
