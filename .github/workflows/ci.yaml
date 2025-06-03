@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'Packer/**'
+  workflow_dispatch:
 
 
 jobs:
