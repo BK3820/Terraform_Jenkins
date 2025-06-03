@@ -3,8 +3,8 @@ name: Packer and Terraform CI/CD
 on:
   push:
     paths:
-      - 'Packer/**'
-      - 'Terraform/**'
+      - 'packer/**'
+      - 'terraform/**'
   pull_request:
   workflow_dispatch:
 

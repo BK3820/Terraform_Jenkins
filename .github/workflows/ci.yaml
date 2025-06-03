@@ -1,0 +1,11 @@
+name: Continous Integration - Packer build
+
+on:
+  push:
+    paths:
+      - 'packer/**'
+
+
+jobs:
+  Packer-Scan:
+    runs-on:  
