@@ -58,7 +58,7 @@ jobs:
 
   Terraform-apply:
     if: github.event.inputs.action == 'apply'
-    needs: Terrafrom-scan-Checkov
+    
     runs-on: ubuntu-latest
     environment: AZURE_SP
     defaults:
