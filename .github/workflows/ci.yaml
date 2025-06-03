@@ -1,4 +1,4 @@
-name: Continous Integration - Packer build
+name: Continuous Integration - Packer Build
 
 on:
   push:
@@ -6,19 +6,27 @@ on:
       - 'Packer/**'
   workflow_dispatch:
 
-
 jobs:
   Packer-Scan:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkov GitHub Action
-        uses: bridgecrewio/checkov-action@v12.1347.0
-        with:
-          # directory with infrastructure code to scan
-          directory: Packer
-          soft_fail: true
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      # List files for debugging
+      - name: List Packer directory contents
+        run: ls -lR Packer
+
+      # Run Checkov to scan Packer templates
+      - name: Run Checkov Scan
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: Packer
+          framework: packer # Explicitly target Packer framework
+          soft_fail: true
           check: CKV_PCKR_1,CKV_PCKR_2,CKV_PCKR_3,CKV_PCKR_4,CKV_PCKR_5,CKV_PCKR_6
           output_format: json
-          output_file_path: checkov.json 
+          output_file_path: checkov-report.json
+
