@@ -3,12 +3,14 @@ name: CD Pipeline
 on:
   push:
     paths:
-      - 'terraform/**'
+      - 'Terraform/**'
   workflow_dispatch:
 
 permissions:
   id-token: write
   contents: read
+  security-events: write
+
 
 env:
   IMAGE_NAME: "jenkins-image"
