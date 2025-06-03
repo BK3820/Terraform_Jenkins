@@ -56,7 +56,7 @@ jobs:
 
 
   Terraform-apply:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event.inputs.action == 'apply'
     needs: Terrafrom-scan-Checkov
     runs-on: ubuntu-latest
     environment: AZURE_SP
@@ -81,15 +81,31 @@ jobs:
         run: terraform plan
 
       - name: Terraform Apply or Destroy
-        run: |
-          if [ "${{ github.event.inputs.action }}" == "apply" ]; then
-            terraform apply -auto-approve
-          else
-            terraform destroy -auto-approve
-          fi
+        run: terraform apply -auto-approve
 
 
+  Terraform-Destroy:
+    if: github.event.inputs.action == 'destroy'
+    runs-on: ubuntu-latest
+    environment: AZURE_SP
+    defaults:
+      run:
+        working-directory: Terraform
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: hashicorp/setup-terraform@v3
+      - name: Terraform Init
+        run: terraform init
+      
+      - name: Terraform Refresh
+        run: terraform refresh
 
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply or Destroy
+        run: terraform destroy -auto-approve
 
 
 
