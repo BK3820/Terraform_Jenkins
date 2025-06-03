@@ -66,12 +66,16 @@ jobs:
         working-directory: Terraform
     steps:
       - uses: actions/checkout@v3
+      - name: setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credential_token: ${{secrets.TF_API_TOKEN}}
       - name: Save SSH public key to file
         run: |
           echo "${{ secrets.VM_SSH_PUBLIC_KEY }}" > id_rsa.pub
           chmod 600 id_rsa.pub
 
-      - uses: hashicorp/setup-terraform@v3
+
       - name: Terraform Init
         run: terraform init
       
