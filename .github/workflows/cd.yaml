@@ -5,6 +5,15 @@ on:
     paths:
       - 'Terraform/**'
   workflow_dispatch:
+    inputs:
+      action:
+        description: 'Terraform action to perform'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+          - apply
+          - destroy
 
 permissions:
   id-token: write
@@ -40,12 +49,13 @@ jobs:
           output_file_path: results.sarif
 
       - name: Upload SARIF to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
 
 
   Terraform-apply:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     environment: AZURE_SP
     defaults:
@@ -59,12 +69,22 @@ jobs:
           chmod 600 id_rsa.pub
 
       - uses: hashicorp/setup-terraform@v3
-      - name: Terraform Init, Plan, Apply
+      - name: Terraform Init
+        run: terraform init
+      
+      - name: Terraform Refresh
+        run: terraform refresh
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply or Destroy
         run: |
-          terraform init 
-          terraform validate 
-          terraform plan -out=tfplan 
-          terraform apply -auto-approve tfplan 
+          if [ "${{ github.event.inputs.action }}" == "apply" ]; then
+            terraform apply -auto-approve
+          else
+            terraform destroy -auto-approve
+          fi
 
 
 
