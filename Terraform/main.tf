@@ -13,14 +13,15 @@ provider "azurerm" {
   }
 }
 
-terraform {
-  cloud {
-    organization = "JenkinsIac"
+terraform { 
+  cloud { 
+    
+    organization = "JenkinsIac" 
 
-    workspaces {
-      name = "Terraform_Jenkins"
-    }
-  }
+    workspaces { 
+      name = "jenkins-iac-wrkspace" 
+    } 
+  } 
 }
 
 
