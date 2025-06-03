@@ -34,6 +34,7 @@ env:
 
 jobs:
   Terrafrom-scan-Checkov:
+    if: github.event.inputs.action == 'apply'
     runs-on: ubuntu-latest
 
     steps:
@@ -56,6 +57,7 @@ jobs:
 
   Terraform-apply:
     if: github.event_name == 'workflow_dispatch'
+    needs: Terrafrom-scan-Checkov
     runs-on: ubuntu-latest
     environment: AZURE_SP
     defaults:
