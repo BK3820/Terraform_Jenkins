@@ -6,27 +6,29 @@ on:
       - 'Packer/**'
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  IMAGE_NAME: "jenkins-image"
+  IMAGE_RESOURCE_GROUP: "vmImage"
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  PACKER_LOG: "1"
+
 jobs:
-  Packer-Scan:
+  trivyscan:
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # List files for debugging
-      - name: List Packer directory contents
-        run: ls -lR Packer
-
-      # Run Checkov to scan Packer templates
-      - name: Run Checkov Scan
-        uses: bridgecrewio/checkov-action@v12
+      - name: Aqua Security Trivy
+        uses: aquasecurity/trivy-action@0.31.0
         with:
-          directory: Packer
-          framework: packer # Explicitly target Packer framework
-          soft_fail: true
-          check: CKV_PCKR_1,CKV_PCKR_2,CKV_PCKR_3,CKV_PCKR_4,CKV_PCKR_5,CKV_PCKR_6
-          output_format: json
-          output_file_path: checkov-report.json
-
+          scan-type: fs
+          scan-ref: ./Packer
+          format: table
+          severity: HIGH,CRITICAL
+              
+  
