@@ -36,6 +36,7 @@ jobs:
 
 
   packer-build:
+    needs: trivyscan
     runs-on: ubuntu-latest
     environment: AZURE_SP
     defaults:
