@@ -13,5 +13,8 @@ It reflects a production-grade, reproducible DevOps setup used in real teams.
 
 ---
 
-## ⚙️ Architecture Overview
+## 📊 Architecture Diagram
+
+![CI/CD Pipeline Architecture](https://github.com/BK3820/Terraform_Jenkins/blob/main/Untitled%20Diagram.drawio-2_page-0001.jpg?raw=true)
+
 
